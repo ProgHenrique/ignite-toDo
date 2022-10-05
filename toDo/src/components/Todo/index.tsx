@@ -7,13 +7,12 @@ import styles from './Todo.module.css'
 interface TodoProps {
   content: string;
   id: string
+  isConcluded: boolean;
   onDeleteToDo: (toDo: string) => void;
   onConcludedToDo: (isConcluded: boolean, id: string) => void;
 }
 
-export function Todo({ content, onDeleteToDo, onConcludedToDo, id }: TodoProps) {
-
-  const [concludedToDo, setConcludedToDo] = useState<boolean>(false)
+export function Todo({ content, onDeleteToDo, onConcludedToDo, id, isConcluded }: TodoProps) {
 
   function handleDeleteToDo() {
     onDeleteToDo(id)
@@ -22,13 +21,11 @@ export function Todo({ content, onDeleteToDo, onConcludedToDo, id }: TodoProps) 
   return (
     <div className={styles.toDo} >
       <Checkbox.Root
-        checked={concludedToDo}
+        checked={isConcluded}
         onCheckedChange={(checked) => {
           if (checked === true) {
-            setConcludedToDo(true)
             onConcludedToDo(true, id)
           } else {
-            setConcludedToDo(false)
             onConcludedToDo(false, id)
           }
         }}
@@ -39,7 +36,7 @@ export function Todo({ content, onDeleteToDo, onConcludedToDo, id }: TodoProps) 
         </Checkbox.Indicator>
       </Checkbox.Root>
 
-      <div className={!concludedToDo ? styles.textToDo : styles.textToDoConcluded}>
+      <div className={!isConcluded ? styles.textToDo : styles.textToDoConcluded}>
         <p>
           {content}
         </p>

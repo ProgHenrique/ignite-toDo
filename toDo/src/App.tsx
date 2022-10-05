@@ -7,6 +7,7 @@ import { PlusCircle } from "phosphor-react";
 import { Todo } from "./components/Todo";
 import { ChangeEvent, FormEvent, InvalidEvent, useEffect, useState } from "react";
 import { WithoutTodo } from "./components/WithoutTodo";
+import axios from "axios";
 
 interface IToDos {
   id: string;
@@ -15,17 +16,21 @@ interface IToDos {
 }
 
 export function App() {
-
   const [toDos, setToDos] = useState<IToDos[]>([])
   const [newToDoText, setNewToDoText] = useState('')
 
+  useEffect(() => {
+    axios('http://localhost:3333/todos').then(response => {
+      setToDos(response.data)
+    })
+  }, [handleCreateToDo])
+
   function handleCreateToDo(event: FormEvent) {
     event.preventDefault()
-    setToDos([...toDos, {
-      id: `id ${(new Date()).getTime()}`,
-      content: newToDoText,
-      isConcluded: false
-    }])
+
+    axios.post('http://localhost:3333/todos', {
+      content: newToDoText
+    })
 
     setNewToDoText('')
   }
@@ -40,23 +45,26 @@ export function App() {
   }
 
   function toDoToBeConcluded(isConcluded: boolean, id: string) {
-    if (isConcluded === true) {
-      const toDoIndex = toDos.findIndex(toDo => toDo.id === id);
-      toDos[toDoIndex].isConcluded = true
-      setToDos([...toDos])
-    } else {
-      const toDoIndex = toDos.findIndex(toDo => toDo.id === id);
-      toDos[toDoIndex].isConcluded = false
-      setToDos([...toDos])
-    }
-  }
 
-  function deleteComment(toDoToDelete: string) {
-    const toDosWithoutDeletedOne = toDos.filter(toDo => {
-      return toDo.id !== toDoToDelete
+    axios.patch(`http://localhost:3333/todos/concluded/${id}`, {
+      isConcluded: isConcluded,
     })
 
-    setToDos(toDosWithoutDeletedOne)
+    setToDos((state) =>
+      state.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, isConcluded: isConcluded }
+        } else {
+          return todo
+        }
+      })
+    )
+  }
+
+  function deleteToDo(toDoToDelete: string) {
+    axios.delete(`http://localhost:3333/todos/${toDoToDelete}`)
+
+    setToDos(state => { return state.filter(todo => todo.id !== toDoToDelete) })
   }
 
   const isNewTodoEmpty = newToDoText.length === 0
@@ -103,7 +111,8 @@ export function App() {
                       key={toDo.id}
                       content={toDo.content}
                       id={toDo.id}
-                      onDeleteToDo={deleteComment}
+                      isConcluded={toDo.isConcluded}
+                      onDeleteToDo={deleteToDo}
                       onConcludedToDo={toDoToBeConcluded}
                     />
                   )
