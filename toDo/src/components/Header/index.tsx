@@ -1,5 +1,5 @@
 import styles from './Header.module.css';
-import toDoLogo from '../../../public/rocket.svg'
+import toDoLogo from '../../assets/rocket.svg';
 
 export function Header() {
 

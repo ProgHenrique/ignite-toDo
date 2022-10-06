@@ -7,7 +7,7 @@ import { PlusCircle } from "phosphor-react";
 import { Todo } from "./components/Todo";
 import { ChangeEvent, FormEvent, InvalidEvent, useEffect, useState } from "react";
 import { WithoutTodo } from "./components/WithoutTodo";
-import axios from "axios";
+import { api } from "./lib/api";
 
 interface IToDos {
   id: string;
@@ -20,15 +20,19 @@ export function App() {
   const [newToDoText, setNewToDoText] = useState('')
 
   useEffect(() => {
-    axios('http://localhost:3333/todos').then(response => {
+    api.get('/todos').then(response => {
       setToDos(response.data)
     })
+
+    // axios('http://localhost:3333/todos').then(response => {
+    //   setToDos(response.data)
+    // })
   }, [handleCreateToDo])
 
   function handleCreateToDo(event: FormEvent) {
     event.preventDefault()
 
-    axios.post('http://localhost:3333/todos', {
+    api.post('/todos', {
       content: newToDoText
     })
 
@@ -46,7 +50,7 @@ export function App() {
 
   function toDoToBeConcluded(isConcluded: boolean, id: string) {
 
-    axios.patch(`http://localhost:3333/todos/concluded/${id}`, {
+    api.patch(`/todos/concluded/${id}`, {
       isConcluded: isConcluded,
     })
 
@@ -62,7 +66,7 @@ export function App() {
   }
 
   function deleteToDo(toDoToDelete: string) {
-    axios.delete(`http://localhost:3333/todos/${toDoToDelete}`)
+    api.delete(`/todos/${toDoToDelete}`)
 
     setToDos(state => { return state.filter(todo => todo.id !== toDoToDelete) })
   }

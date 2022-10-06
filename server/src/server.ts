@@ -53,4 +53,4 @@ app.delete('/todos/:id', async (request, response) => {
   return response.send(`${id} deleted`)
 })
 
-app.listen(3333, () => console.log("server on"))
+app.listen(process.env.PORT || 3333, () => console.log("server on"))
