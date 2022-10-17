@@ -7,7 +7,6 @@ import { PlusCircle } from "phosphor-react";
 import { Todo } from "./components/Todo";
 import { ChangeEvent, FormEvent, InvalidEvent, useEffect, useState } from "react";
 import { WithoutTodo } from "./components/WithoutTodo";
-import { api } from "./lib/api";
 
 interface IToDos {
   id: string;
@@ -16,25 +15,31 @@ interface IToDos {
 }
 
 export function App() {
-  const [toDos, setToDos] = useState<IToDos[]>([])
+  const [toDos, setToDos] = useState<IToDos[]>(() => {
+    const storedStateJSON = localStorage.getItem('@ignite-todo:todos-1.0.0',)
+
+    if (storedStateJSON) {
+      return JSON.parse(storedStateJSON)
+    }
+
+    return []
+
+  })
   const [newToDoText, setNewToDoText] = useState('')
 
   useEffect(() => {
-    api.get('/todos').then(response => {
-      setToDos(response.data)
-    })
+    const stateJSON = JSON.stringify(toDos)
+    localStorage.setItem('@ignite-todo:todos-1.0.0', stateJSON)
+  }, [toDos])
 
-    // axios('http://localhost:3333/todos').then(response => {
-    //   setToDos(response.data)
-    // })
-  }, [handleCreateToDo])
-
-  function handleCreateToDo(event: FormEvent) {
+  function handleCreateToDo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    api.post('/todos', {
-      content: newToDoText
-    })
+    setToDos(state => [...state, {
+      id: String(new Date().getTime()),
+      content: newToDoText,
+      isConcluded: false,
+    }])
 
     setNewToDoText('')
   }
@@ -50,10 +55,6 @@ export function App() {
 
   function toDoToBeConcluded(isConcluded: boolean, id: string) {
 
-    api.patch(`/todos/concluded/${id}`, {
-      isConcluded: isConcluded,
-    })
-
     setToDos((state) =>
       state.map((todo) => {
         if (todo.id === id) {
@@ -66,8 +67,6 @@ export function App() {
   }
 
   function deleteToDo(toDoToDelete: string) {
-    api.delete(`/todos/${toDoToDelete}`)
-
     setToDos(state => { return state.filter(todo => todo.id !== toDoToDelete) })
   }
 
@@ -79,7 +78,7 @@ export function App() {
 
       <div className={styles.wrapper}>
         <form
-          onSubmit={handleCreateToDo}
+          onSubmit={(e) => handleCreateToDo(e)}
           className={styles.contentForm}
         >
           <input
@@ -91,7 +90,7 @@ export function App() {
             onInvalid={handleNewToDoInvalid}
             required
           />
-          <button type="submit" disabled={isNewTodoEmpty} >Criar <PlusCircle size={16} weight="bold" /></button>
+          <button type="submit" disabled={isNewTodoEmpty} >Criar<PlusCircle size={16} weight="bold" /></button>
         </form>
 
         <div>
