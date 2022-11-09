@@ -44,3 +44,14 @@ body, input, textarea, button {
   font-size: 1rem;
   line-height: 140%;
 }
+
+@media (max-width: 600px ) {
+  html{
+    font-size: 87.5%;
+  }
+}
+@media (max-width: 300px ) {
+  html{
+    font-size: 75%;
+  }
+}

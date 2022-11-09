@@ -1,6 +1,7 @@
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { Check, Trash } from 'phosphor-react';
 import { useEffect, useState } from "react"
+import { useWindowSize } from '../../hooks/useWindowSize';
 
 import styles from './Todo.module.css'
 
@@ -13,14 +14,22 @@ interface TodoProps {
 }
 
 export function Todo({ content, onDeleteToDo, onConcludedToDo, id, isConcluded }: TodoProps) {
+  const [todoState, setTodoState] = useState(isConcluded)
+
+  const windowSize = useWindowSize()
+
+  function handlesetStateConcluded() {
+    onConcludedToDo(!todoState, id)
+    setTodoState(!todoState)
+  }
 
   function handleDeleteToDo() {
     onDeleteToDo(id)
   }
 
   return (
-    <div className={styles.toDo} >
-      <Checkbox.Root
+    <div className={styles.toDo} onClick={windowSize > 600 ? undefined : handlesetStateConcluded} >
+      {windowSize > 600 && (<Checkbox.Root
         checked={isConcluded}
         onCheckedChange={(checked) => {
           if (checked === true) {
@@ -34,7 +43,10 @@ export function Todo({ content, onDeleteToDo, onConcludedToDo, id, isConcluded }
         <Checkbox.Indicator>
           <Check className={styles.checkIcon} weight='bold' />
         </Checkbox.Indicator>
-      </Checkbox.Root>
+      </Checkbox.Root>)}
+
+
+
 
       <div className={!isConcluded ? styles.textToDo : styles.textToDoConcluded}>
         <p>

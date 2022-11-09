@@ -1,12 +1,14 @@
 .wrapper {
+  width: 100%;
   max-width: 46rem;
   margin: 0 auto;
   margin-top: -1.6875rem;
 }
 
 .contentForm {
+  width: 100%;
   display: grid;
-  grid-template-columns: 638px 1fr;
+  grid-template-columns: 5fr 1fr;
   gap: 0.5rem;
   height: 3.375rem;
   margin-bottom: 4rem;
@@ -62,7 +64,7 @@
 
   background: var(--gray-400);
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: 9999px;
 
   display: flex;
   align-items: center;
@@ -84,16 +86,25 @@
 }
 
 .toDoContent {
-  max-height: 26.125rem;
+  max-height: 23.5rem;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding-right: .5rem;
 }
 
-@media (max-width: 768px) {
+.toDoContent::-webkit-scrollbar{
+  width: 5px;
+}
 
-  html {
-    font-size: 87.5%;
+.toDoContent::-webkit-scrollbar-thumb {
+  background-color: var(--gray-500);
+  border-radius: 20px;
+}
+
+@media (max-width: 600px ) {
+  .wrapper {
+    padding: 0 1.5rem;
   }
 }
