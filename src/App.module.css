@@ -86,7 +86,7 @@
 }
 
 .toDoContent {
-  max-height: 23.5rem;
+  max-height: 52.5vh;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
