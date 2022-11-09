@@ -89,6 +89,7 @@ export function App() {
             type="text"
             onInvalid={handleNewToDoInvalid}
             required
+            maxLength={160}
           />
           <button type="submit" disabled={isNewTodoEmpty} >Criar<PlusCircle size={16} weight="bold" /></button>
         </form>
